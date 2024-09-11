@@ -1,0 +1,32 @@
+<div>
+  {% if section.settings['selected-collection'] != null %}
+    The new {{ section.settings['selected-collection'].title }} is out now!
+
+    {% for product in section.settings['selected-collection'].products %}
+      {{- product.title | link_to: product.url }}
+    {% endfor %}
+
+  {% else %}
+    Hi Stranger!
+  {% endif %}
+</div>
+
+{% schema %}
+{
+"name": "Call to action",
+"settings": [
+    {
+      "type": "collection",
+      "id": "selected-collection",
+      "label": "Select a collection"
+    }
+]
+,
+"presets": [
+	{
+	"name": "Call to Action",
+	"category": "Promotional"
+	}
+]
+}
+{% endschema %}
