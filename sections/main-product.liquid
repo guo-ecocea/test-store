@@ -462,7 +462,6 @@
                 %}
 
               {%- when 'variant_picker' -%}
-                <p>Variant selected : {{ product.selected_or_first_available_variant.title }}</p>
                 {% render 'product-variant-picker', product: product, block: block, product_form_id: product_form_id %}
               {%- when 'buy_buttons' -%}
                 {% if product.metafields.custom.pre_order %}
@@ -476,6 +475,21 @@
                       form="{{ product_form_id }}"
                       value="{{ product.metafields.custom.pre_order }}"
                     >
+                  </p>
+                {% endif %}
+                {% if product.variants %}
+                  <h3 id="variant-preorder-h3" style="color: green"></h3>
+                  <p class="line-item-property__field" id="variant-preorder-p" hidden>
+                    {% comment %}
+                      <label for="delivery-date">Pre-order delivery date</label>
+                      <input
+                        id="delivery-date"
+                        type="text"
+                        name="properties[Pre-order delivery date]"
+                        form="{{ product_form_id }}"
+                        value="{{ product.metafields.custom.pre_order }}"
+                      >
+                    {% endcomment %}
                   </p>
                 {% endif %}
                 {%- render 'buy-buttons',
@@ -734,6 +748,102 @@
 
     <script type="application/ld+json">
       {{ product | structured_data }}
+    </script>
+
+    <script data-ref="variant-ids" type="application/json">
+      [{%- for variant in product.variants -%}
+        {
+          "id": "{{ variant.id }}",
+          "pre_order": "{{ variant.metafields.custom.pre_order }}",
+          "price": {{ variant.price }},
+          "title": "{{ variant.title }}"
+        }
+        {% unless forloop.last %},{% endunless %}
+      {%- endfor -%}]
+    </script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      let product = {{ product | json }}
+      let variantDict = {};
+      const variants = JSON.parse(document.querySelector('script[data-ref="variant-ids"]').textContent);
+      let preorders = {};
+      
+      variants.forEach(variant => {
+        variantDict[variant.id] = variant;
+      });
+
+      function fillPreorders() { 
+        for (let i = 0; i < variants.length; i++) {
+          if (variants[i].pre_order.length > 0)
+            preorders[variants[i].id] = variants[i].pre_order;
+        }
+      }
+
+      fillPreorders();
+
+      function getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+      }
+
+      function createPreorderTag(variantId) {
+        if (variantId in preorders) {
+          const h3 = document.getElementById("variant-preorder-h3");
+          h3.innerText = `It's pre-orderable for the ${preorders[variantId]}`;
+          let label = document.getElementById("preorder-label");
+          const p = document.getElementById("variant-preorder-p");
+          if (!label) {
+            label = document.createElement("label");
+            label.setAttribute("id", "preorder-label");
+            label.setAttribute("for", "variant-delivery-date");
+            label.innerText = "Pre-order delivery date"
+            p.appendChild(label);
+          }
+          let input = document.getElementById("variant-delivery-date");
+          if (!input) {
+            input = document.createElement("input");
+            input.setAttribute("id", "variant-delivery-date");
+            input.setAttribute("type", "text");
+            input.setAttribute("name", "properties[Pre-order delivery date]");
+            input.setAttribute("form", "{{ product_form_id }}");
+            p.appendChild(input);
+          }
+          input.setAttribute("value", preorders[variantId]);
+        } else {
+          const h3 = document.getElementById("variant-preorder-h3");
+          h3.innerText = "";
+          document.getElementById("preorder-label").remove();
+          document.getElementById("variant-delivery-date").remove();
+        }
+      }
+
+      function checkVariantPreorder() {
+        const variantId = getQueryParam('variant');
+        if (variantId && variantDict[variantId]) {
+          createPreorderTag(variantId);
+        } else if (product.variants && product.variants.length > 0) {
+          createPreorderTag(product.variants[0].id);
+        } else {
+          console.log('Variant not found or no variant parameter in URL.');
+          console.log(product)
+        }
+      }
+
+      checkVariantPreorder();
+
+      const originalPushState = history.pushState;
+      history.pushState = function () {
+        originalPushState.apply(history, arguments);
+        checkVariantPreorder();
+      };
+
+      const originalReplaceState = history.replaceState;
+      history.replaceState = function () {
+        originalReplaceState.apply(history, arguments);
+        checkVariantPreorder();
+      };
+    });
     </script>
   </div>
 </product-info>
