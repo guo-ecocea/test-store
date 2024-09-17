@@ -1,4 +1,7 @@
 {
+  "date_formats": {
+    "complete_date": "%d/%m/%Y"
+  },
   "general": {
     "password_page": {
       "login_form_heading": "Accéder à la boutique à l'aide d'un mot de passe :",
@@ -111,7 +114,7 @@
         "on_pre_order": "En précommande",
         "some_variants_on_pre_order": "Variante(s) en précommande",
         "all_variants_on_pre_order": "Toutes les variantes en précommande", 
-        "it_is_pre_ordable_for_the": "Précommandable pour le",
+        "pre_ordable_for_the": "Précommandable pour le",
         "pre_order_delivery_date": "Date de livraison de la précommande"
       },
       "add_to_cart": "Ajouter au panier",

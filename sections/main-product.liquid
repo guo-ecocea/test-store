@@ -475,11 +475,12 @@
                   {% assign now = 'now' | date: '%s' %}
                   {% if order_date > now %}
                     <h3 style="color: green">
+                      {% assign formatted_date = product.selected_or_first_available_variant.metafields.custom.pre_order | date: "%F" | date: format: "complete_date" %}
                       {{
-                        'products.product.pre_order.it_is_pre_ordable_for_the'
+                        'products.product.pre_order.pre_ordable_for_the'
                         | t
                         | append: ' '
-                        | append: product.selected_or_first_available_variant.metafields.custom.pre_order
+                        | append: formatted_date
                       }}
                     </h3>
                     <p class="line-item-property__field" hidden>
@@ -760,6 +761,7 @@
         {
           "id": "{{ variant.id }}",
           "pre_order": "{{ variant.metafields.custom.pre_order }}",
+          "pre_order_formatted_date": "{{ variant.metafields.custom.pre_order | date: "%F" | date: format: "complete_date" }}",
           "price": {{ variant.price }},
           "title": "{{ variant.title }}",
           "available": {{ variant.available }}
@@ -782,7 +784,10 @@
         function fillPreorders() { 
           for (let i = 0; i < variants.length; i++) {
             if (variants[i].pre_order.length > 0 && Date.parse(variants[i].pre_order) > Date.now())
-              preorders[variants[i].id] = variants[i].pre_order;
+              preorders[variants[i].id] = {
+                value: variants[i].pre_order,
+                pre_order_formatted_date: variants[i].pre_order_formatted_date
+              };
           }
         }
       
@@ -796,7 +801,7 @@
         function createPreorderTag(variantId) {
           if (variantDict[variantId].available && variantId in preorders) {
             const h3 = document.getElementById("variant-preorder-h3");
-            h3.innerText = `{{ 'products.product.pre_order.it_is_pre_ordable_for_the' | t }} ${preorders[variantId]}`;
+            h3.innerText = `{{ 'products.product.pre_order.pre_ordable_for_the' | t }} ${preorders[variantId].pre_order_formatted_date}`;
             let label = document.getElementById("preorder-label");
             const p = document.getElementById("variant-preorder-p");
             if (!label) {
@@ -815,7 +820,7 @@
               input.setAttribute("form", "{{ product_form_id }}");
               p.appendChild(input);
             }
-            input.setAttribute("value", preorders[variantId]);
+            input.setAttribute("value", preorders[variantId].pre_order_formatted_date);
           } else {
             const h3 = document.getElementById("variant-preorder-h3");
             if (h3) h3.innerText = "";
