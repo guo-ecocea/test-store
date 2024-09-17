@@ -109,8 +109,8 @@
     "product": {
       "pre_order": {
         "on_pre_order": "En précommande",
-        "some_variants_on_pre_order": "Variant(s) en précommande",
-        "all_variants_on_pre_order": "Tous les variants en précommande", 
+        "some_variants_on_pre_order": "Variante(s) en précommande",
+        "all_variants_on_pre_order": "Toutes les variantes en précommande", 
         "it_is_pre_ordable_for_the": "Précommandable pour le",
         "pre_order_delivery_date": "Date de livraison de la précommande"
       },
