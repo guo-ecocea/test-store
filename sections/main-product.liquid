@@ -790,37 +790,35 @@
         }
       
         function createPreorderTag(variantId) {
-          if (variantDict[variantId].available) {
-            if (variantId in preorders) {
-              const h3 = document.getElementById("variant-preorder-h3");
-              h3.innerText = `It's pre-orderable for the ${preorders[variantId]}`;
-              let label = document.getElementById("preorder-label");
-              const p = document.getElementById("variant-preorder-p");
-              if (!label) {
-                label = document.createElement("label");
-                label.setAttribute("id", "preorder-label");
-                label.setAttribute("for", "variant-delivery-date");
-                label.innerText = "Pre-order delivery date"
-                p.appendChild(label);
-              }
-              let input = document.getElementById("variant-delivery-date");
-              if (!input) {
-                input = document.createElement("input");
-                input.setAttribute("id", "variant-delivery-date");
-                input.setAttribute("type", "text");
-                input.setAttribute("name", "properties[Pre-order delivery date]");
-                input.setAttribute("form", "{{ product_form_id }}");
-                p.appendChild(input);
-              }
-              input.setAttribute("value", preorders[variantId]);
-            } else {
-              const h3 = document.getElementById("variant-preorder-h3");
-              if (h3) h3.innerText = "";
-              const label = document.getElementById("preorder-label")
-              if (label) label.remove();
-              const input = document.getElementById("variant-delivery-date");
-              if (input) input.remove();
+          if (variantDict[variantId].available && variantId in preorders) {
+            const h3 = document.getElementById("variant-preorder-h3");
+            h3.innerText = `It's pre-orderable for the ${preorders[variantId]}`;
+            let label = document.getElementById("preorder-label");
+            const p = document.getElementById("variant-preorder-p");
+            if (!label) {
+              label = document.createElement("label");
+              label.setAttribute("id", "preorder-label");
+              label.setAttribute("for", "variant-delivery-date");
+              label.innerText = "Pre-order delivery date"
+              p.appendChild(label);
             }
+            let input = document.getElementById("variant-delivery-date");
+            if (!input) {
+              input = document.createElement("input");
+              input.setAttribute("id", "variant-delivery-date");
+              input.setAttribute("type", "text");
+              input.setAttribute("name", "properties[Pre-order delivery date]");
+              input.setAttribute("form", "{{ product_form_id }}");
+              p.appendChild(input);
+            }
+            input.setAttribute("value", preorders[variantId]);
+          } else {
+            const h3 = document.getElementById("variant-preorder-h3");
+            if (h3) h3.innerText = "";
+            const label = document.getElementById("preorder-label")
+            if (label) label.remove();
+            const input = document.getElementById("variant-delivery-date");
+            if (input) input.remove();
           }
         }
       
