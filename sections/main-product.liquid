@@ -475,15 +475,19 @@
                   {% assign now = 'now' | date: '%s' %}
                   {% if order_date > now %}
                     <h3 style="color: green">
-                      It's pre-orderable for the
-                      {{ product.selected_or_first_available_variant.metafields.custom.pre_order }}
+                      {{
+                        'products.product.pre_order.it_is_pre_ordable_for_the'
+                        | t
+                        | append: ' '
+                        | append: product.selected_or_first_available_variant.metafields.custom.pre_order
+                      }}
                     </h3>
                     <p class="line-item-property__field" hidden>
-                      <label for="delivery-date">Pre-order delivery date</label>
+                      <label for="delivery-date">{{ 'products.product.pre_order.pre_order_delivery_date' | t }}</label>
                       <input
                         id="delivery-date"
                         type="text"
-                        name="properties[Pre-order delivery date]"
+                        name="properties[{{ 'products.product.pre_order.pre_order_delivery_date' | t }}]"
                         form="{{ product_form_id }}"
                         value="{{ product.selected_or_first_available_variant.metafields.custom.pre_order }}"
                       >
@@ -792,14 +796,14 @@
         function createPreorderTag(variantId) {
           if (variantDict[variantId].available && variantId in preorders) {
             const h3 = document.getElementById("variant-preorder-h3");
-            h3.innerText = `It's pre-orderable for the ${preorders[variantId]}`;
+            h3.innerText = `{{ 'products.product.pre_order.it_is_pre_ordable_for_the' | t }} ${preorders[variantId]}`;
             let label = document.getElementById("preorder-label");
             const p = document.getElementById("variant-preorder-p");
             if (!label) {
               label = document.createElement("label");
               label.setAttribute("id", "preorder-label");
               label.setAttribute("for", "variant-delivery-date");
-              label.innerText = "Pre-order delivery date"
+              label.innerText = "{{ 'products.product.pre_order.pre_order_delivery_date' | t }}"
               p.appendChild(label);
             }
             let input = document.getElementById("variant-delivery-date");
@@ -807,7 +811,7 @@
               input = document.createElement("input");
               input.setAttribute("id", "variant-delivery-date");
               input.setAttribute("type", "text");
-              input.setAttribute("name", "properties[Pre-order delivery date]");
+              input.setAttribute("name", "properties[{{ 'products.product.pre_order.pre_order_delivery_date' | t }}]");
               input.setAttribute("form", "{{ product_form_id }}");
               p.appendChild(input);
             }
