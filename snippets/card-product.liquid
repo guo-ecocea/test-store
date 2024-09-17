@@ -213,7 +213,7 @@
                 | date: '%s'
               %}
               {% if order_date > now %}
-                <h6 style="color: green">On pre-order</h6>
+                <h6 style="color: green">{{ 'products.product.pre_order.on_pre_order' | t }}</h6>
               {% endif %}
             {% else %}
               {% assign all_variants_have_pre_order = true %}
@@ -233,9 +233,9 @@
               {% endfor %}
 
               {% if all_variants_have_pre_order and card_product.available %}
-                <h6 style="color: green">All variants on pre-order</h6>
+                <h6 style="color: green">{{ 'products.product.pre_order.all_variants_on_pre_order' | t }}</h6>
               {% elsif some_variants_have_pre_order and card_product.available %}
-                <h6 style="color: green">Some variants on pre-order</h6>
+                <h6 style="color: green">{{ 'products.product.pre_order.some_variants_on_pre_order' | t }}</h6>
               {% endif %}
             {% endif %}
             {% render 'price', product: card_product, price_class: '', show_compare_at_price: true %}

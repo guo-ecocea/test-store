@@ -106,6 +106,13 @@
   },
   "products": {
     "product": {
+      "pre_order": {
+        "on_pre_order": "On pre-order",
+        "some_variants_on_pre_order": "Some variants on pre-order",
+        "all_variants_on_pre_order": "All variants on pre-order", 
+        "it_is_pre_ordable_for_the": "It's pre-ordable for the",
+        "pre_order_delivery_date": "Pre-order delivery date"
+      },
       "add_to_cart": "Add to cart",
       "choose_options": "Choose options",
       "choose_product_options": "Choose options for {{ product_name }}",

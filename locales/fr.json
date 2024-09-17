@@ -107,6 +107,13 @@
   },
   "products": {
     "product": {
+      "pre_order": {
+        "on_pre_order": "En précommande",
+        "some_variants_on_pre_order": "Variant(s) en précommande",
+        "all_variants_on_pre_order": "Tous les variants en précommande", 
+        "it_is_pre_ordable_for_the": "Précommandable pour le",
+        "pre_order_delivery_date": "Date de livraison de la précommande"
+      },
       "add_to_cart": "Ajouter au panier",
       "description": "Description",
       "on_sale": "Promotion",
