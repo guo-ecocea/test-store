@@ -464,11 +464,20 @@
               {%- when 'variant_picker' -%}
                 {% render 'product-variant-picker', product: product, block: block, product_form_id: product_form_id %}
               {%- when 'buy_buttons' -%}
-                {% if product.available and product.metafields.custom.pre_order %}
-                  {% assign order_date = product.metafields.custom.pre_order | date: "%s" %}
-                  {% assign now = "now" | date: "%s" %}
+                {% if product.available
+                  and product.selected_or_first_available_variant
+                  and product.variants.size <= 1
+                  and product.selected_or_first_available_variant.metafields.custom.pre_order
+                %}
+                  {% assign order_date = product.selected_or_first_available_variant.metafields.custom.pre_order
+                    | date: '%s'
+                  %}
+                  {% assign now = 'now' | date: '%s' %}
                   {% if order_date > now %}
-                    <h3 style="color: green">It's pre-orderable for the {{ product.metafields.custom.pre_order }}</h3>
+                    <h3 style="color: green">
+                      It's pre-orderable for the
+                      {{ product.selected_or_first_available_variant.metafields.custom.pre_order }}
+                    </h3>
                     <p class="line-item-property__field" hidden>
                       <label for="delivery-date">Pre-order delivery date</label>
                       <input
@@ -476,16 +485,13 @@
                         type="text"
                         name="properties[Pre-order delivery date]"
                         form="{{ product_form_id }}"
-                        value="{{ product.metafields.custom.pre_order }}"
+                        value="{{ product.selected_or_first_available_variant.metafields.custom.pre_order }}"
                       >
                     </p>
                   {% endif %}
-                {% endif %}
-                {% if product.variants %}
+                {% elsif product.variants %}
                   <h3 id="variant-preorder-h3" style="color: green"></h3>
-                  <p class="line-item-property__field" id="variant-preorder-p" hidden>
-                    
-                  </p>
+                  <p class="line-item-property__field" id="variant-preorder-p" hidden></p>
                 {% endif %}
                 {%- render 'buy-buttons',
                   block: block,
@@ -751,7 +757,8 @@
           "id": "{{ variant.id }}",
           "pre_order": "{{ variant.metafields.custom.pre_order }}",
           "price": {{ variant.price }},
-          "title": "{{ variant.title }}"
+          "title": "{{ variant.title }}",
+          "available": {{ variant.available }}
         }
         {% unless forloop.last %},{% endunless %}
       {%- endfor -%}]
@@ -783,7 +790,7 @@
         }
       
         function createPreorderTag(variantId) {
-          if (variantId in preorders) {
+          if (variantDict[variantId].available && variantId in preorders) {
             const h3 = document.getElementById("variant-preorder-h3");
             h3.innerText = `It's pre-orderable for the ${preorders[variantId]}`;
             let label = document.getElementById("preorder-label");
@@ -807,10 +814,12 @@
             input.setAttribute("value", preorders[variantId]);
           } else {
             const h3 = document.getElementById("variant-preorder-h3");
-            h3.innerText = "";
-            document.getElementById("preorder-label").remove();
-            document.getElementById("variant-delivery-date").remove();
-          }
+            if (h3) h3.innerText = "";
+            const label = document.getElementById("preorder-label")
+            if (label) label.remove();
+            const input = document.getElementById("variant-delivery-date");
+            if (input) input.remove()
+;          }
         }
       
         function checkVariantPreorder() {
@@ -818,9 +827,10 @@
           if (variantId && variantDict[variantId]) {
             createPreorderTag(variantId);
           } else if (product.variants && product.variants.length > 0) {
-            createPreorderTag(product.variants[0].id);
+            const selectedVariant = {{ product.selected_or_first_available_variant | json  }}
+            createPreorderTag(selectedVariant.id);
           } else {
-            console.log('Variant not found or no variant parameter in URL.');
+            console.log('No variant parameter in URL or not preorder.');
             console.log(product)
           }
         }
