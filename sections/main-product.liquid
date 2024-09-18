@@ -750,9 +750,16 @@
       endif
     -%}
 
-    <script type="application/ld+json">
-      {{ product | structured_data }}
-    </script>
+    {% capture options_ids %}
+    [
+    {%- for option in product.options_with_values -%}
+      {%- for value in option.values -%}
+        "{{ section.id }}-{{ option.position }}-{{ forloop.index0 -}}"
+        {% unless forloop.last %},{% endunless %}
+      {% endfor %}
+    {% endfor -%}
+    ]
+    {% endcapture %}
 
     <script data-ref="variant-ids" type="application/json">
       [{%- for variant in product.variants -%}
@@ -778,11 +785,17 @@
             "pre_order_delivery_date": "{{ 'products.product.pre_order.pre_order_delivery_date' | t }}"
           }
         },
-        "productFormId": "{{ product_form_id }}"
+        "productFormId": "{{ product_form_id }}",
+        "options_ids": {{ options_ids | strip_newlines }},
+        "sectionId": "{{ section.id }}"
       }
     </script>
 
     <script src="{{ 'product-preorder.js' | asset_url }}" defer></script>
+
+    <script type="application/ld+json">
+      {{ product | structured_data }}
+    </script>
   </div>
 </product-info>
 
