@@ -323,6 +323,22 @@
           </div>
         </div>
         {% assign product_form_id = 'quick-add-' | append: section_id | append: card_product.id %}
+        {% if card_product.available
+          and card_product.selected_or_first_available_variant
+          and card_product.variants.size <= 1
+          and card_product.selected_or_first_available_variant.metafields.custom.pre_order
+        %}
+          <p class="line-item-property__field" hidden>
+            <label for="delivery-date">{{ 'products.product.pre_order.pre_order_delivery_date' | t }}</label>
+            <input
+              id="delivery-date"
+              type="text"
+              name="properties[{{ 'products.product.pre_order.pre_order_delivery_date' | t }}]"
+              form="{{ product_form_id }}"
+              value="{{ card_product.selected_or_first_available_variant.metafields.custom.pre_order }}"
+            >
+          </p>
+        {% endif %}
         {% if quick_add == 'standard' %}
           <div class="quick-add no-js-hidden">
             {%- liquid
