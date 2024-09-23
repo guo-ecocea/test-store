@@ -39,18 +39,7 @@
     <p class="line-item-property__field" id="variant-preorder-p" hidden></p>
   {% endif %}
 
-  {% capture options_ids %}
-    [
-      {%- for option in product.options_with_values -%}
-        {%- for value in option.values -%}
-          "{{ section.id }}-{{ option.position }}-{{ forloop.index0 -}}"
-          {% unless forloop.last %},{% endunless %}
-        {% endfor %}
-      {% endfor -%}
-    ]
-  {% endcapture %}
-
-  <script data-ref="variant-ids" type="application/json">
+  {% capture variants %}
     [{%- for variant in product.variants -%}
       {
         "id": "{{ variant.id }}",
@@ -62,7 +51,7 @@
       }
       {% unless forloop.last %},{% endunless %}
     {%- endfor -%}]
-  </script>
+  {% endcapture %}
 
   <script data-ref="product-datas" type="application/json">
     {
@@ -75,7 +64,7 @@
         }
       },
       "productFormId": "{{ product_form_id }}",
-      "options_ids": {{ options_ids | strip_newlines }},
+      "variants": {{ variants | strip_newlines }},
       "sectionId": "{{ section.id }}"
     }
   </script>

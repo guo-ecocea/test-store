@@ -1,57 +1,27 @@
 /*
-{% capture options_ids %}
-[
-{%- for option in product.options_with_values -%}
-  {%- for value in option.values -%}
-    "{{ section.id }}-{{ option.position }}-{{ forloop.index0 -}}"
-    {% unless forloop.last %},{% endunless %}
-  {% endfor %}
-{% endfor -%}
-]
-{% endcapture %}
-
-<script data-ref="variant-ids" type="application/json">
-  [{%- for variant in product.variants -%}
-    {
-      "id": "{{ variant.id }}",
-      "pre_order": "{{ variant.metafields.custom.pre_order }}",
-      "pre_order_formatted_date": "{{ variant.metafields.custom.pre_order | date: "%F" | date: format: "complete_date" }}",
-      "price": {{ variant.price }},
-      "title": "{{ variant.title }}",
-      "available": {{ variant.available }}
-    }
-    {% unless forloop.last %},{% endunless %}
-  {%- endfor -%}]
-</script>
-
 <script data-ref="product-datas" type="application/json">
-  {
-    "product": {{ product | json }},
-    "selected_or_first_available_variant": {{ product.selected_or_first_available_variant | json }},
-    "localText": {
-      "pre_order": {
-        "pre_ordable_for_the": "{{ 'products.product.pre_order.pre_ordable_for_the' | t }}",
-        "pre_order_delivery_date": "{{ 'products.product.pre_order.pre_order_delivery_date' | t }}"
-      }
-    },
-    "productFormId": "{{ product_form_id }}",
-    "options_ids": {{ options_ids | strip_newlines }},
-    "sectionId": "{{ section.id }}"
-  }
+{
+  "product": {{ product | json }},
+  "selected_or_first_available_variant": {{ product.selected_or_first_available_variant | json }},
+  "localText": {
+    "pre_order": {
+      "pre_ordable_for_the": "{{ 'products.product.pre_order.pre_ordable_for_the' | t }}",
+      "pre_order_delivery_date": "{{ 'products.product.pre_order.pre_order_delivery_date' | t }}"
+    }
+  },
+  "productFormId": "{{ product_form_id }}",
+  "variants": {{ variants | strip_newlines }},
+  "sectionId": "{{ section.id }}"
+}
 </script>
-
-<script src="{{ 'product-preorder.js' | asset_url }}" defer></script>
 */
 
 (function () {
   // Parsing initial data
-  const variants = JSON.parse(
-    document.querySelector('script[data-ref="variant-ids"]').textContent
-  );
   const data = JSON.parse(
     document.querySelector('script[data-ref="product-datas"]').textContent
   );
-  const { localText, product } = data;
+  const { localText, variants } = data;
 
   let variantDict = {};
   let preorders = {};
