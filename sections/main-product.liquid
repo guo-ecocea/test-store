@@ -464,38 +464,7 @@
               {%- when 'variant_picker' -%}
                 {% render 'product-variant-picker', product: product, block: block, product_form_id: product_form_id %}
               {%- when 'buy_buttons' -%}
-                {% if product.available
-                  and product.selected_or_first_available_variant
-                  and product.variants.size <= 1
-                  and product.selected_or_first_available_variant.metafields.custom.pre_order
-                %}
-                  {% assign order_date = product.selected_or_first_available_variant.metafields.custom.pre_order
-                    | date: '%s'
-                  %}
-                  {% assign now = 'now' | date: '%s' %}
-                  {% if order_date > now %}
-                    <h3 style="color: green">
-                      {% assign formatted_date = product.selected_or_first_available_variant.metafields.custom.pre_order
-                        | date: '%F'
-                        | date: format: 'complete_date'
-                      %}
-                      {{ 'products.product.pre_order.pre_ordable_for_the' | t | append: ' ' | append: formatted_date }}
-                    </h3>
-                    <p class="line-item-property__field" hidden>
-                      <label for="delivery-date">{{ 'products.product.pre_order.pre_order_delivery_date' | t }}</label>
-                      <input
-                        id="delivery-date"
-                        type="text"
-                        name="properties[{{ 'products.product.pre_order.pre_order_delivery_date' | t }}]"
-                        form="{{ product_form_id }}"
-                        value="{{ product.selected_or_first_available_variant.metafields.custom.pre_order }}"
-                      >
-                    </p>
-                  {% endif %}
-                {% elsif product.variants %}
-                  <h3 id="variant-preorder-h3" style="color: green"></h3>
-                  <p class="line-item-property__field" id="variant-preorder-p" hidden></p>
-                {% endif %}
+                {% render 'pre-order-details', product: product, section: section %}
                 {%- render 'buy-buttons',
                   block: block,
                   product: product,
@@ -749,49 +718,6 @@
         assign seo_media = product.featured_media
       endif
     -%}
-
-    {% capture options_ids %}
-    [
-    {%- for option in product.options_with_values -%}
-      {%- for value in option.values -%}
-        "{{ section.id }}-{{ option.position }}-{{ forloop.index0 -}}"
-        {% unless forloop.last %},{% endunless %}
-      {% endfor %}
-    {% endfor -%}
-    ]
-    {% endcapture %}
-
-    <script data-ref="variant-ids" type="application/json">
-      [{%- for variant in product.variants -%}
-        {
-          "id": "{{ variant.id }}",
-          "pre_order": "{{ variant.metafields.custom.pre_order }}",
-          "pre_order_formatted_date": "{{ variant.metafields.custom.pre_order | date: "%F" | date: format: "complete_date" }}",
-          "price": {{ variant.price }},
-          "title": "{{ variant.title }}",
-          "available": {{ variant.available }}
-        }
-        {% unless forloop.last %},{% endunless %}
-      {%- endfor -%}]
-    </script>
-
-    <script data-ref="product-datas" type="application/json">
-      {
-        "product": {{ product | json }},
-        "selected_or_first_available_variant": {{ product.selected_or_first_available_variant | json }},
-        "localText": {
-          "pre_order": {
-            "pre_ordable_for_the": "{{ 'products.product.pre_order.pre_ordable_for_the' | t }}",
-            "pre_order_delivery_date": "{{ 'products.product.pre_order.pre_order_delivery_date' | t }}"
-          }
-        },
-        "productFormId": "{{ product_form_id }}",
-        "options_ids": {{ options_ids | strip_newlines }},
-        "sectionId": "{{ section.id }}"
-      }
-    </script>
-
-    <script src="{{ 'product-preorder.js' | asset_url }}" defer></script>
 
     <script type="application/ld+json">
       {{ product | structured_data }}

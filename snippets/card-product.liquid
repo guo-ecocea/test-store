@@ -203,41 +203,7 @@
                 </span>
               </p>
             {%- endif -%}
-            {% assign now = 'now' | date: '%s' %}
-            {% if card_product.available
-              and card_product.selected_or_first_available_variant
-              and card_product.variants.size <= 1
-              and card_product.selected_or_first_available_variant.metafields.custom.pre_order
-            %}
-              {% assign order_date = card_product.selected_or_first_available_variant.metafields.custom.pre_order
-                | date: '%s'
-              %}
-              {% if order_date > now %}
-                <h6 style="color: green">{{ 'products.product.pre_order.on_pre_order' | t }}</h6>
-              {% endif %}
-            {% else %}
-              {% assign all_variants_have_pre_order = true %}
-              {% assign some_variants_have_pre_order = false %}
-
-              {% for variant in card_product.variants %}
-                {% if variant.metafields.custom.pre_order and variant.available %}
-                  {% assign order_date = variant.metafields.custom.pre_order | date: '%s' %}
-                  {% if order_date <= now %}
-                    {% assign all_variants_have_pre_order = false %}
-                  {% elsif some_variants_have_pre_order != true %}
-                    {% assign some_variants_have_pre_order = true %}
-                  {% endif %}
-                {% else %}
-                  {% assign all_variants_have_pre_order = false %}
-                {% endif %}
-              {% endfor %}
-
-              {% if all_variants_have_pre_order and card_product.available %}
-                <h6 style="color: green">{{ 'products.product.pre_order.all_variants_on_pre_order' | t }}</h6>
-              {% elsif some_variants_have_pre_order and card_product.available %}
-                <h6 style="color: green">{{ 'products.product.pre_order.some_variants_on_pre_order' | t }}</h6>
-              {% endif %}
-            {% endif %}
+            {% render 'pre-order-tag', product: card_product %}
             {% render 'price', product: card_product, price_class: '', show_compare_at_price: true %}
             {%- if card_product.quantity_price_breaks_configured? -%}
               {% if card_product.variants.size == 1 and quick_add == 'bulk' %}
