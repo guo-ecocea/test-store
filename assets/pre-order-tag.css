@@ -1,0 +1,7 @@
+.pre-order-tag-badge {
+  color: green;
+  background: rgb(216, 250, 216);
+  width: fit-content;
+  border-radius: 30px;
+  padding: 5px 10px;
+}

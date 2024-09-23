@@ -8,6 +8,8 @@
 {% endcomment %}
 
 {% unless product == null %}
+  {{ 'pre-order-tag.css' | asset_url | stylesheet_tag }}
+
   {% assign now = 'now' | date: '%s' %}
   {% if product.available
     and product.selected_or_first_available_variant
@@ -16,7 +18,7 @@
   %}
     {% assign order_date = product.selected_or_first_available_variant.metafields.custom.pre_order | date: '%s' %}
     {% if order_date > now %}
-      <h6 style="color: green">{{ 'products.product.pre_order.on_pre_order' | t }}</h6>
+      <h6 class="pre-order-tag-badge">{{ 'products.product.pre_order.on_pre_order' | t }}</h6>
     {% endif %}
   {% else %}
     {% assign all_variants_have_pre_order = true %}
@@ -36,9 +38,9 @@
     {% endfor %}
 
     {% if all_variants_have_pre_order and product.available %}
-      <h6 style="color: green">{{ 'products.product.pre_order.all_variants_on_pre_order' | t }}</h6>
+      <h6 class="pre-order-tag-badge">{{ 'products.product.pre_order.all_variants_on_pre_order' | t }}</h6>
     {% elsif some_variants_have_pre_order and product.available %}
-      <h6 style="color: green">{{ 'products.product.pre_order.some_variants_on_pre_order' | t }}</h6>
+      <h6 class="pre-order-tag-badge">{{ 'products.product.pre_order.some_variants_on_pre_order' | t }}</h6>
     {% endif %}
   {% endif %}
 {% endunless %}
