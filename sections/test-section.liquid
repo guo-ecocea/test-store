@@ -1,6 +1,14 @@
+<p>{{ section.settings.title }}</p
+
 {% schema %}
   {
     "name": "Section name",
-    "settings": []
+    "settings": [
+      {
+        "type": "textarea",
+        "id": "title",
+        "label": "Title"
+      }
+    ]
   }
 {% endschema %}
