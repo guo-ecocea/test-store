@@ -15,9 +15,16 @@
         "padding_top": 28,
         "padding_bottom": 28
       }
+    },
+    "test_section_H4WRBR": {
+      "type": "test-section",
+      "settings": {
+        "title": "TEST TITLE"
+      }
     }
   },
   "order": [
-    "main"
+    "main",
+    "test_section_H4WRBR"
   ]
 }
